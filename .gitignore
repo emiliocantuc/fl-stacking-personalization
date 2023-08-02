@@ -1,3 +1,11 @@
+# Custom
+datasets/
+partitions/
+imagenes/
+results/
+*.out
+*.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

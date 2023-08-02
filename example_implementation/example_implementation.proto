@@ -1,0 +1,91 @@
+syntax = "proto3";
+package example_implementation;
+
+service FLServer {
+
+    // Request admission into the federation
+    rpc request_admission (AddmissionRequest) returns (Status) {};
+
+    // Submit a model
+    rpc submit_model (ModelSubmission) returns (Status) {};
+
+    // Submit importances
+    rpc submit_importances (ImportancesSubmission) returns (Status) {};
+
+    // Fetch all of the model's meta data
+    rpc get_model_info (ModelsFetchRequest) returns (ModelInfoReply) {};
+
+    // Fetch specified models
+    rpc get_models (ModelsFetchRequest) returns (ModelsFetchReply) {};
+
+    // Fetch the public contribution scores
+    rpc get_importances (Empty) returns (Importances) {};
+
+    rpc clear(Empty) returns (Status) {};
+
+}
+
+// Useful messages
+message Empty {}
+
+message Status {
+    optional bool success = 1; 
+    optional string details = 2;
+}
+
+// Requests islands send to join the federation
+message AddmissionRequest {
+    optional string name = 1;
+}
+
+
+// Pertaining to information on a submitted model
+message ModelInfo {
+    optional int32 trained_on_n = 1;
+    optional int32 bytes = 2;
+    optional string from_island = 3;
+    optional string model_type = 4;
+}
+
+message ModelInfoReply{
+    optional Status status = 1;
+    repeated ModelInfo info = 2;
+}
+
+// A model is sent and received as raw bytes
+message Model {
+    optional bytes model = 1;
+}
+
+// To submit a model
+message ModelSubmission {
+    optional string from_island = 1;
+    optional ModelInfo info = 2;
+    optional Model model = 3;
+}
+
+// For requesting models and models info
+message ModelsFetchRequest {
+    repeated string models = 1;
+}
+
+// Reply to a models fetch request
+message ModelsFetchReply {
+    optional Status status = 1;
+    repeated Model models = 2;
+    repeated ModelInfo models_info = 3;
+}
+
+// Importances by island
+message Importances {
+    repeated string islands = 1;
+    repeated float importances = 2;
+    repeated float plain_importances = 3;
+}
+
+// Submitting importances
+message ImportancesSubmission {
+    optional string from_island = 1;
+    optional Importances importances = 2;
+}
+
